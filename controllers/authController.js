@@ -6,20 +6,42 @@ exports.registerUser = async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ msg: 'Email is already registered' });
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ msg: 'Invalid email format' });
     }
 
+    // Validate password length
+    if (password.length < 8) {
+      return res.status(400).json({ msg: 'Password must be at least 8 characters' });
+    }
+
+    // Check if email is already registered
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ msg: 'Email already registered' });
+    }
+
+    // Create and save the new user
     user = new User({ username, email, password });
     await user.save();
 
-    res.status(201).json({ msg: 'User registered successfully' }); // Return success message
+    // Return the username and email in the response
+    res.status(201).json({
+      msg: 'User registered successfully',
+      user: {
+        username: user.username,
+        email: user.email,
+        password: user.password
+      },
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ msg: 'Server error' });
   }
 };
+
 
 // Login user
 exports.loginUser = async (req, res) => {
@@ -38,7 +60,16 @@ exports.loginUser = async (req, res) => {
 
     const payload = { user: { id: user.id } };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    res.json({
+      msg: 'Login successful',
+      user:{
+        id:user.id,
+        username:user.username,
+        email:user.email,
+      },
+      token: token,
+    });
+
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ msg: 'Server error', error: err.message });
