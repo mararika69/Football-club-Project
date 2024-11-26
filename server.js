@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes'); // Import user routes
+const footballRoutes = require('./routes/footballerRoutes'); // Import football routes
 
 dotenv.config(); // Load environment variables
 
@@ -17,8 +17,8 @@ app.use(cors());
 connectDB();
 
 // Routes
-app.use('/api/auth', authRoutes); // Register auth routes
-app.use('/api/users', userRoutes); // Register user routes
+app.use('/api/auth', authRoutes);
+app.use('/api/footballers', footballRoutes); // Footballer routes
 
 // Start the server
 const PORT = process.env.PORT || 5000;
