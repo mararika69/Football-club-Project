@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 // Register a new user
 exports.registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, role } = req.body;
 
   try {
     // Validate email format
@@ -24,7 +24,12 @@ exports.registerUser = async (req, res) => {
     }
 
     // Create and save the new user
-    user = new User({ username, email, password });
+    user = new User({ 
+      username, 
+      email, 
+      password, 
+      role: role || 'user',
+    });
     await user.save();
 
     // Return the username and email in the response
@@ -33,7 +38,8 @@ exports.registerUser = async (req, res) => {
       user: {
         username: user.username,
         email: user.email,
-        password: user.password
+        password: user.password,
+        role: user.role,
       },
     });
   } catch (err) {
@@ -66,6 +72,7 @@ exports.loginUser = async (req, res) => {
         id:user.id,
         username:user.username,
         email:user.email,
+        role:user.role,
       },
       token: token,
     });
