@@ -3,23 +3,22 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes'); // Import user routes
-
-dotenv.config(); // Load environment variables
+const userRoutes = require('./routes/userRoutes'); 
+const ticketRoutes = require ('./routes/ticketRoutes');
+// const { useRoutes } = require('react-router-dom');
+dotenv.config(); 
 
 const app = express();
 
-// Middleware
+
 app.use(express.json());
 app.use(cors());
+app.use ('/api/tickets',ticketRoutes);
 
-// Connect to the database
 connectDB();
 
-// Routes
-app.use('/api/auth', authRoutes); // Register auth routes
-app.use('/api/users', userRoutes); // Register user routes
+app.use('/api/auth', authRoutes); 
+app.use('/api/users', userRoutes);
 
-// Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
