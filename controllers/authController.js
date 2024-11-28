@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
-
   try {
 
     if (!username || !email || !password) {
@@ -21,7 +20,14 @@ const registerUser = async (req, res) => {
     if (user) {
       return res.status(409).json({ msg: 'Email is already registered.' });
     }
-    user = new User({ username, email, password });
+    // Create and save the new user
+    user = new User({ 
+      username, 
+      email, 
+      password, 
+      role: role || 'user',
+    });
+
     await user.save();
     res.status(201).json({
       msg: 'User registered successfully.',
@@ -53,13 +59,15 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ msg: 'Invalid email or password.' });
     }
     const payload = { user: { id: user.id } };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
-    res.status(200).json({
-      msg: 'User logged in successfully.',
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.json({
+      msg: 'Login successful',
+      user:{
+        id:user.id,
+        username:user.username,
+        email:user.email,
+        role:user.role,
       },
       token: token,
     });
