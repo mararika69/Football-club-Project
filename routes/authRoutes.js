@@ -1,10 +1,10 @@
 const express = require('express');
-const { registerUser, loginUser } = require('../controllers/authController');
-
+const { createMatch, deleteMatch, getMatchDetail } = require('../controllers/matchController'); // Import functions
 const router = express.Router();
 
-// Routes
-router.post('/register', registerUser); // Register user
-router.post('/login', loginUser);       // Login user
+// Routes for matches
+router.post('/create', createMatch);             // Create a new match
+router.delete('/delete/:id', deleteMatch);       // Delete a match by ID
+router.get('/detail/:id', getMatchDetail);       // Get match details by ID
 
 module.exports = router;
